@@ -1,0 +1,10 @@
+{
+  "name": "shutter-api-gnosis.dnp.dappnode.eth",
+  "version": "0.1.0",
+  "globalEnvs": [
+    {
+      "envs": ["PUBLIC_IP", "EXECUTION_CLIENT_GNOSIS"],
+      "services": ["shutter"]
+    }
+  ]
+}

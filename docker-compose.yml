@@ -1,0 +1,47 @@
+version: "3.8"
+services:
+  db:
+    build:
+      context: db
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U postgres
+
+  shutter:
+    build:
+      context: shutter
+      args:
+        UPSTREAM_VERSION: v1.3.0-api
+        KEYPER_CONFIG_DIR: /keyper/config
+        SHUTTER_CHAIN_DIR: /chain
+        STAKER_SCRIPTS_VERSION: v0.1.0
+    restart: unless-stopped
+    environment:
+      SHUTTER_API_NODE_PRIVATEKEY: ""
+      SHUTTER_PUSH_METRICS_ENABLED: false
+      KEYPER_NAME: ""
+      ETHEREUM_WS: ""
+    volumes:
+      - chain:/chain
+      - keyper-config:/keyper/config
+
+  metrics:
+    build:
+      context: metrics
+    restart: on-failure
+    environment:
+      SHUTTER_PUSH_METRICS_ENABLED: true
+      KEYPER_NAME: ""
+      PUSHGATEWAY_URL: "https://keyperingest.metrics.shutter.network/api/v1/write"
+      PUSHGATEWAY_USERNAME: ""
+      PUSHGATEWAY_PASSWORD: ""
+    volumes:
+      - metrics-config:/config
+
+volumes:
+  db_data: {}
+  chain: {}
+  keyper-config: {}
+  metrics-config: {}

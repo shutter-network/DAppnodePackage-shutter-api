@@ -1,0 +1,29 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'keyper'
+    static_configs:
+      - targets: ["shutter.shutter-api-%{NETWORK}.dappnode:9200"]
+        labels:
+          instance: "kpr-%{KEYPER_NAME}"
+          deployment: "%{_ASSETS_VERSION}"
+          deployment_type: "dappnode"
+          network: "%{_ASSETS_NETWORK}"
+  - job_name: 'shuttermint'
+    metrics_path: /
+    static_configs:
+      - targets: ["shutter.shutter-api-%{NETWORK}.dappnode:9200"]
+        labels:
+          instance: "kpr-%{KEYPER_NAME}"
+          deployment: "%{_ASSETS_VERSION}"
+          deployment_type: "dappnode"
+          network: "%{_ASSETS_NETWORK}"
+  - job_name: 'vmagent'
+    static_configs:
+      - targets: ["localhost:8429"]
+        labels:
+          instance: "kpr-%{KEYPER_NAME}"
+          deployment: "%{_ASSETS_VERSION}"
+          deployment_type: "dappnode"
+          network: "%{_ASSETS_NETWORK}"

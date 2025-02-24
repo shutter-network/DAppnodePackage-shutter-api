@@ -1,0 +1,39 @@
+{
+  "description": "Shutter Service Keyper",
+  "type": "service",
+  "author": "DAppNode Association <admin@dappnode.io> (https://github.com/dappnode)",
+  "categories": ["ETH2.0"],
+  "links": {
+    "homepage": "https://www.shutter.network/"
+  },
+  "license": "GPL-3.0",
+  "upstream": [
+    {
+      "repo": "dappnode/staker-package-scripts",
+      "version": "v0.1.0",
+      "arg": "STAKER_SCRIPTS_VERSION"
+    }
+  ],
+  "backup": [
+    {
+      "name": "keyper-config",
+      "path": "/keyper/config",
+      "service": "shutter"
+    },
+    {
+      "name": "chain-config",
+      "path": "/chain/config",
+      "service": "shutter"
+    },
+    {
+      "name": "db-data",
+      "path": "/var/lib/postgresql/data",
+      "service": "db"
+    },
+    {
+      "name": "metrics-config",
+      "path": "/config/user",
+      "service": "metrics"
+    }
+  ]
+}

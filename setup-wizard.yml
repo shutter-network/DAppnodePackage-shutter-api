@@ -1,0 +1,78 @@
+version: "2"
+fields:
+  - id: keyper_name
+    title: Choose your Keyper Name
+    description: |
+      The Keyper Name is an identifier for your Keyper in the Shutter network.
+    target:
+      type: environment
+      name: KEYPER_NAME
+      service: [shutter, metrics]
+    required: true
+
+  - id: private_key
+    title: Input your Keyper Private Key
+    description: |
+      This private key must correspond to one of the addresses defined as a Keyper in the Shutter network.
+    target:
+      type: environment
+      name: SHUTTER_API_NODE_PRIVATEKEY
+      service: shutter
+    required: false
+    secret: true
+
+  - id: external_ws_rpc 
+    title: External WS RPC
+    description: |
+      A websocket connection to an external ethereum RPC.
+    target:
+      type: environment
+      name: ETHEREUM_WS 
+      service: shutter
+    required: true
+
+  - id: enable_push_metrics
+    title: Enable Push Metrics
+    description: |
+      Enable the push metrics feature to send metrics to an external server controlled by Shutter.
+    target:
+      type: environment
+      name: SHUTTER_PUSH_METRICS_ENABLED
+      service: [shutter, metrics]
+    enum:
+      - "true"
+      - "false"
+
+  - id: pushgateway_url
+    title: Pushgateway URL
+    description: |
+      The URL of the Pushgateway server to send metrics to.
+    target:
+      type: environment
+      name: PUSHGATEWAY_URL
+      service: metrics
+    required: false
+    if: { enable_push_metrics: { "enum": ["true"] } }
+
+  - id: pushgateway_username
+    title: Pushgateway Username
+    description: |
+      The username to authenticate with the Pushgateway server.
+    target:
+      type: environment
+      name: PUSHGATEWAY_USERNAME
+      service: metrics
+    required: false
+    if: { enable_push_metrics: { "enum": ["true"] } }
+
+  - id: pushgateway_password
+    title: Pushgateway Password
+    description: |
+      The password to authenticate with the Pushgateway server.
+    target:
+      type: environment
+      name: PUSHGATEWAY_PASSWORD
+      service: metrics
+    required: false
+    secret: true
+    if: { enable_push_metrics: { "enum": ["true"] } }

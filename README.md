@@ -28,10 +28,10 @@ This package includes the following services:
 
 The setup wizard provides options for users to configure the package. These values need to be filled:
 
-   - `KEYPER_NAME`
-   - `SHUTTER_API_NODE_PRIVATEKEY`
-   - `ETHEREUM_WS`
-   - `SHUTTER_PUSH_METRICS_ENABLED`
-   - `PUSHGATEWAY_URL`
-   - `PUSHGATEWAY_USERNAME`
-   - `PUSHGATEWAY_PASSWORD`
+   - `KEYPER_NAME`: a unique name for your keyper so it can be identified in the network.
+   - `SHUTTER_API_NODE_PRIVATEKEY`: A privatekey for an ethereum externally owned account.
+   - `ETHEREUM_WS`: An ethereum websocket RPC url. This can either point to an external RPC, or an RPC node running on your dappnode.
+   - `SHUTTER_PUSH_METRICS_ENABLED`: A boolean flag deciding whether metrics will be pushed (see values below).
+   - `PUSHGATEWAY_URL`: You don't need to change the default here.
+   - `PUSHGATEWAY_USERNAME`: A username for the push gateway from above.
+   - `PUSHGATEWAY_PASSWORD`: A password for the push gateway from above.

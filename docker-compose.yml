@@ -13,7 +13,7 @@ services:
     build:
       context: shutter
       args:
-        UPSTREAM_VERSION: v1.3.0-api
+        UPSTREAM_VERSION: v1.3.1
         KEYPER_CONFIG_DIR: /keyper/config
         SHUTTER_CHAIN_DIR: /chain
         STAKER_SCRIPTS_VERSION: v0.1.0

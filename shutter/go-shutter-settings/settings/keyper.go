@@ -11,7 +11,7 @@ type KeyperConfig struct {
 	DatabaseURL          string `env:"SHUTTER_DATABASEURL"`
 	BeaconAPIURL         string `env:"SHUTTER_BEACONAPIURL"`
 	MaxNumKeysPerMessage int    `env:"_ASSETS_MAX_NUM_KEYS_PER_MESSAGE"`
-	Chain               struct {
+	Chain                struct {
 		EncryptedGasLimit    int `env:"_ASSETS_ENCRYPTED_GAS_LIMIT"`
 		MaxTxPointerAge      int `env:"_ASSETS_MAX_TX_POINTER_AGE"`
 		GenesisSlotTimestamp int `env:"_ASSETS_GENESIS_SLOT_TIMESTAMP"`
@@ -25,7 +25,7 @@ type KeyperConfig struct {
 		Contracts struct {
 			KeyperSetManager     string `env:"_ASSETS_KEYPER_SET_MANAGER"`
 			KeyBroadcastContract string `env:"_ASSETS_KEY_BROADCAST_CONTRACT"`
-			ShutterRegistry      string `env:"_ASSETS_SHUTTER_REGISTRY"`
+			ShutterRegistry      string `env:"_ASSETS_SHUTTERREGISTRY"`
 		}
 	}
 	P2P struct {
@@ -33,7 +33,10 @@ type KeyperConfig struct {
 		ListenAddresses          []string `env:"SHUTTER_P2P_LISTENADDRESSES"`
 		AdvertiseAddresses       []string `env:"SHUTTER_P2P_ADVERTISEADDRESSES"`
 		CustomBootstrapAddresses []string `env:"_ASSETS_CUSTOM_BOOTSTRAP_ADDRESSES"`
-		DiscoveryNamespace       string   `env:"_ASSETS_DISCOVERY_NAME_PREFIX"`
+		DiscoveryNamespace       string   `env:"SHUTTER_DISCOVERY_NAMESPACE"`
+		FloodSubDiscovery        struct {
+			Enabled bool `env:"FLOODSUB_DISCOVERY_ENABLED"`
+		}
 	}
 	Shuttermint struct {
 		ShuttermintURL     string `env:"SHUTTER_SHUTTERMINT_SHUTTERMINTURL"`

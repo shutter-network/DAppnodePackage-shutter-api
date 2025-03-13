@@ -29,7 +29,7 @@ fields:
       type: environment
       name: ETHEREUM_WS 
       service: shutter
-    required: true
+    required: false
 
   - id: enable_push_logs
     title: Enable Push Logs

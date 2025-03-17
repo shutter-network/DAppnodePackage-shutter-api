@@ -7,7 +7,7 @@
 . "${ASSETS_DIR}/variables.env"
 
 function test_ethereum_url() {
-    RESULT=$(wscat -c "$SHUTTER_NETWORK_NODE_ETHEREUMURL" -x '{"jsonrpc": "2.0", "method": "eth_syncing", "params": [], "id": 1}')
+    RESULT=$(docker run --rm -it --net=host monotykamary/wscat -c "$SHUTTER_NETWORK_NODE_ETHEREUMURL" -x '{"jsonrpc": "2.0", "method": "eth_chainId", "params": [], "id": 1}')
     if [[ $RESULT =~ '"id":1' ]]; then return 0; else
         echo "Could not find DAppNode RPC/WS url for this package!"
         echo "Please configure 'ETHEREUM_WS' to point to an applicable websocket RPC service."

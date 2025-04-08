@@ -41,6 +41,6 @@ scrape_configs:
    - targets:
       - localhost
      labels:
-      job: keyper
+      job: chain
       host: $(HOSTNAME)
       __path__: /tmp/chain.log

@@ -35,3 +35,11 @@ The setup wizard provides options for users to configure the package. These valu
    - `PUSHGATEWAY_URL`: You don't need to change the default here.
    - `PUSHGATEWAY_USERNAME`: A username for the push gateway from above.
    - `PUSHGATEWAY_PASSWORD`: A password for the push gateway from above.
+
+### Developer notes
+
+Building the package requires docker and a vpn connection to a dappnode. It can be run with:
+
+```
+npx @dappnode/dappnodesdk@latest build --all-variants
+```

@@ -20,7 +20,7 @@ scrape_configs:
       - localhost
      labels:
       job: configure
-      host: ${HOSTNAME}
+      host: $(HOSTNAME)
       __path__: /tmp/configure.log
 
  - job_name: keyper
@@ -31,7 +31,7 @@ scrape_configs:
       - localhost
      labels:
       job: keyper
-      host: ${HOSTNAME}
+      host: $(HOSTNAME)
       __path__: /tmp/keyper.log
 
  - job_name: chain
@@ -42,5 +42,5 @@ scrape_configs:
       - localhost
      labels:
       job: keyper
-      host: ${HOSTNAME}
+      host: $(HOSTNAME)
       __path__: /tmp/chain.log

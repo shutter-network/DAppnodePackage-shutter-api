@@ -31,6 +31,18 @@ fields:
       service: shutter
     required: true
 
+  - id: enable_push_logs
+    title: Enable Push Logs
+    description: |
+      Enable the push logs feature to send logs to an external server controlled by Shutter.
+    target:
+      type: environment
+      name: SHUTTER_PUSH_LOGS_ENABLED
+      service: [shutter, metrics]
+    enum:
+      - "true"
+      - "false"
+
   - id: enable_push_metrics
     title: Enable Push Metrics
     description: |
@@ -46,7 +58,7 @@ fields:
   - id: pushgateway_url
     title: Pushgateway URL
     description: |
-      The URL of the Pushgateway server to send metrics to.
+      The URL of the Pushgateway server to send metrics/logs to.
     target:
       type: environment
       name: PUSHGATEWAY_URL

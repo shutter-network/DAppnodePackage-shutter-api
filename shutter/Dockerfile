@@ -49,6 +49,21 @@ RUN mkdir -p ${KEYPER_CONFIG_DIR} ${SHUTTER_CHAIN_DIR} ${ASSETS_DIR} /opt/superv
 COPY scripts /usr/local/bin/
 COPY --from=assets ${ASSETS_DIR}/ ${ASSETS_DIR}/
 
+RUN apt-get update && apt-get install -y \
+  ca-certificates \
+  curl
+
+ARG NODE_VERSION=22.14.0
+ARG NODE_PACKAGE=node-v$NODE_VERSION-linux-x64
+ARG NODE_HOME=/opt/$NODE_PACKAGE
+
+ENV NODE_PATH $NODE_HOME/lib/node_modules
+ENV PATH $NODE_HOME/bin:$PATH
+
+RUN curl https://nodejs.org/dist/v$NODE_VERSION/$NODE_PACKAGE.tar.gz | tar -xzC /opt/
+
+RUN npm install -g wscat
+
 # Placed here to rebuild less layers
 ENV CHAIN_PORT=${CHAIN_PORT} \
     SHUTTER_P2P_LISTENADDRESSES="/ip4/0.0.0.0/tcp/${KEYPER_PORT},/ip4/0.0.0.0/udp/${KEYPER_PORT}/quic-v1" \

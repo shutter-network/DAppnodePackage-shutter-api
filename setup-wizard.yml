@@ -24,7 +24,7 @@ fields:
   - id: external_ws_rpc 
     title: External WS RPC
     description: |
-      A websocket connection to an external ethereum RPC.
+      A websocket connection to an external ethereum RPC (e.g. 'wss://some.external.url' or 'ws://1.2.3.4:8545'). If this is given, shutter will use this RPC to connect to the network. If not, shutter will try to use an RPC service on this dappnode.
     target:
       type: environment
       name: ETHEREUM_WS 

@@ -6,6 +6,13 @@
 # shellcheck disable=SC1091
 . "${ASSETS_DIR}/variables.env"
 
+NODE_VERSION=22.14.0
+NODE_PACKAGE=node-v$NODE_VERSION-linux-x64
+NODE_HOME=/opt/$NODE_PACKAGE
+
+NODE_PATH=$NODE_HOME/lib/node_modules
+PATH=$NODE_HOME/bin:$PATH
+
 function test_ethereum_url() {
     RESULT=$(wscat -c "$SHUTTER_NETWORK_NODE_ETHEREUMURL" -x '{"jsonrpc": "2.0", "method": "eth_syncing", "params": [], "id": 1}')
     if [[ $RESULT =~ '"id":1' ]]; then return 0; else

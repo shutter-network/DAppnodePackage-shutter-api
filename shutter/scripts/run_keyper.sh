@@ -20,7 +20,7 @@ perform_chain_healthcheck() {
 run_keyper() {
     if [[ SHUTTER_PUSH_LOGS_ENABLED=true ]];
     then
-        $SHUTTER_BIN shutterservicekeyper --config "$KEYPER_CONFIG_FILE" | rotatelogs -n 1 -e -c /tmp/keyper.log 5M
+        $SHUTTER_BIN shutterservicekeyper --config "$KEYPER_CONFIG_FILE" |& rotatelogs -n 1 -e -c /tmp/keyper.log 5M
     else
         $SHUTTER_BIN shutterservicekeyper --config "$KEYPER_CONFIG_FILE"
     fi

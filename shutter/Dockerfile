@@ -1,7 +1,7 @@
 ARG ASSETS_VERSION
 ARG UPSTREAM_VERSION
 
-FROM ghcr.io/shutter-network/assets:${ASSETS_VERSION} as assets
+FROM ghcr.io/shutter-network/assets:${ASSETS_VERSION} AS assets
 
 RUN rsync -aq --delete /assets-source/ /assets/
 
@@ -40,6 +40,7 @@ ADD ${STAKER_SCRIPTS_URL}/dvt_lsd_tools.sh /etc/profile.d/
 
 COPY go-shutter-settings ${SHUTTER_SETTINGS_SRC_DIR}
 COPY supervisord.conf /etc/supervisord.conf
+COPY promtail_config.yaml /etc/promtail_config.yaml
 
 RUN go build -C ${SHUTTER_SETTINGS_SRC_DIR} -o /usr/local/bin/go_shutter_settings
 
@@ -48,6 +49,15 @@ RUN mkdir -p ${KEYPER_CONFIG_DIR} ${SHUTTER_CHAIN_DIR} ${ASSETS_DIR} /opt/superv
 
 COPY scripts /usr/local/bin/
 COPY --from=assets ${ASSETS_DIR}/ ${ASSETS_DIR}/
+
+# For pushing logs to loki
+RUN apt-get -y install wget gpg
+RUN mkdir -p /etc/apt/keyrings/
+RUN wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor > /etc/apt/keyrings/grafana.gpg
+RUN echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | tee /etc/apt/sources.list.d/grafana.list
+# promtail & rotatelogs (from apache2)
+RUN apt-get update && apt-get -y install promtail apache2
+
 
 # Placed here to rebuild less layers
 ENV CHAIN_PORT=${CHAIN_PORT} \

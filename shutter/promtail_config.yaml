@@ -1,0 +1,46 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+client:
+  url: https://logs.metrics.shutter.network/insert/loki/api/v1/push
+  basic_auth:
+    username: ${PUSHGATEWAY_USERNAME}
+    password: ${PUSHGATEWAY_PASSWORD}
+
+scrape_configs:
+ - job_name: configure
+   pipeline_stages:
+   - docker:
+   static_configs:
+   - targets:
+      - localhost
+     labels:
+      job: configure
+      host: ${KEYPER_NAME}
+      __path__: /tmp/configure.log
+
+ - job_name: keyper
+   pipeline_stages:
+   - docker:
+   static_configs:
+   - targets:
+      - localhost
+     labels:
+      job: keyper
+      host: ${KEYPER_NAME}
+      __path__: /tmp/keyper.log
+
+ - job_name: chain
+   pipeline_stages:
+   - docker:
+   static_configs:
+   - targets:
+      - localhost
+     labels:
+      job: chain
+      host: ${KEYPER_NAME}
+      __path__: /tmp/chain.log

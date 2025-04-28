@@ -22,10 +22,9 @@ services:
       - SHUTTER_PUSH_METRICS_ENABLED=false
       - KEYPER_NAME=""
       - ETHEREUM_WS=""
-      - SHUTTER_PUSH_LOGS_ENABLED
-      - PUSHGATEWAY_USERNAME
-      - PUSHGATEWAY_PASSWORD
-      - HOSTNAME
+      - SHUTTER_PUSH_LOGS_ENABLED=false
+      - PUSHGATEWAY_USERNAME=""
+      - PUSHGATEWAY_PASSWORD=""
     volumes:
       - chain:/chain
       - keyper-config:/keyper/config

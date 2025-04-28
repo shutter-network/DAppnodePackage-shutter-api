@@ -30,7 +30,7 @@ The setup wizard provides options for users to configure the package. These valu
 
    - `KEYPER_NAME`: a unique name for your keyper so it can be identified in the network.
    - `SHUTTER_API_NODE_PRIVATEKEY`: A privatekey for an ethereum externally owned account.
-   - `ETHEREUM_WS`: An ethereum websocket RPC url. This can either point to an external RPC, or an RPC node running on your dappnode.
+   - `ETHEREUM_WS`: An optional ethereum websocket RPC url. This can either point to an external RPC, or an RPC node running on your dappnode. If it is not given, shutter will try to use an internal RPC through the 'staker scripts' mechanism.
    - `SHUTTER_PUSH_METRICS_ENABLED`: A boolean flag deciding whether metrics will be pushed (see values below).
    - `PUSHGATEWAY_URL`: You don't need to change the default here.
    - `PUSHGATEWAY_USERNAME`: A username for the push gateway from above.

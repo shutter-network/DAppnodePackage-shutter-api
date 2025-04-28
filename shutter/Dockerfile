@@ -58,6 +58,20 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com 
 # promtail & rotatelogs (from apache2)
 RUN apt-get update && apt-get -y install promtail apache2
 
+RUN apt-get update && apt-get install -y \
+  ca-certificates \
+  curl
+
+ARG NODE_VERSION=22.14.0
+ARG NODE_PACKAGE=node-v$NODE_VERSION-linux-x64
+ARG NODE_HOME=/opt/$NODE_PACKAGE
+
+ENV NODE_PATH $NODE_HOME/lib/node_modules
+ENV PATH $NODE_HOME/bin:$PATH
+
+RUN curl https://nodejs.org/dist/v$NODE_VERSION/$NODE_PACKAGE.tar.gz | tar -xzC /opt/
+
+RUN npm install -g wscat
 
 # Placed here to rebuild less layers
 ENV CHAIN_PORT=${CHAIN_PORT} \

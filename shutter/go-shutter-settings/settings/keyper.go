@@ -12,11 +12,12 @@ type KeyperConfig struct {
 	BeaconAPIURL         string `env:"SHUTTER_BEACONAPIURL"`
 	MaxNumKeysPerMessage int    `env:"_ASSETS_MAX_NUM_KEYS_PER_MESSAGE"`
 	Chain                struct {
-		EncryptedGasLimit    int `env:"_ASSETS_ENCRYPTED_GAS_LIMIT"`
-		MaxTxPointerAge      int `env:"_ASSETS_MAX_TX_POINTER_AGE"`
-		GenesisSlotTimestamp int `env:"_ASSETS_GENESIS_SLOT_TIMESTAMP"`
-		SyncStartBlockNumber int `env:"_ASSETS_SYNC_START_BLOCK_NUMBER"`
-		Node                 struct {
+		EncryptedGasLimit        int `env:"_ASSETS_ENCRYPTED_GAS_LIMIT"`
+		MaxTxPointerAge          int `env:"_ASSETS_MAX_TX_POINTER_AGE"`
+		GenesisSlotTimestamp     int `env:"_ASSETS_GENESIS_SLOT_TIMESTAMP"`
+		SyncStartBlockNumber     int `env:"_ASSETS_SYNC_START_BLOCK_NUMBER"`
+		SyncMonitorCheckInterval int `env:"_ASSETS_SYNC_MONITOR_CHECK_INTERVAL"`
+		Node                     struct {
 			PrivateKey    string `env:"SHUTTER_API_NODE_PRIVATEKEY"`
 			ContractsURL  string `env:"SHUTTER_GNOSIS_NODE_CONTRACTSURL"` //Unused
 			DeploymentDir string `env:"SHUTTER_DEPLOYMENT_DIR"`           // Unused

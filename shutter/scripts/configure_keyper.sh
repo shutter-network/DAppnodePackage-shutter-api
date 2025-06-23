@@ -33,7 +33,8 @@ fi
 
 export SHUTTER_P2P_ADVERTISEADDRESSES="[\"/ip4/${_DAPPNODE_GLOBAL_PUBLIC_IP}/tcp/${KEYPER_PORT}\", \"/ip4/${_DAPPNODE_GLOBAL_PUBLIC_IP}/udp/${KEYPER_PORT}/quic-v1\"]"
 
-export SHUTTER_NETWORK_NODE_ETHEREUMURL=${ETHEREUM_WS:-$(get_execution_ws_url_from_global_env "$NETWORK" "$SUPPORTED_NETWORKS")}
+//FIXME: This is a workaround for the issue with the staker-scripts@v0.1.1 not setting get_execution_ws_url_from_global_env correctly in the environment variables.
+export SHUTTER_NETWORK_NODE_ETHEREUMURL=${ETHEREUM_WS:-ws://execution.${SUPPORTED_NETWORKS}.dncore.dappnode:8545}
 echo "[DEBUG | configure] SHUTTER_NETWORK_NODE_ETHEREUMURL is ${SHUTTER_NETWORK_NODE_ETHEREUMURL}"
 test_ethereum_url
 

@@ -16,8 +16,8 @@ PATH=$NODE_HOME/bin:$PATH
 function test_ethereum_url() {
     RESULT=$(wscat -c "$SHUTTER_NETWORK_NODE_ETHEREUMURL" -x '{"jsonrpc": "2.0", "method": "eth_syncing", "params": [], "id": 1}')
     if [[ $RESULT =~ '"id":1' ]]; then return 0; else
-        export SHUTTER_NETWORK_NODE_ETHEREUMURL=ws://execution.${SUPPORTED_NETWORKS}.dncore.dappnode:8545
-        RESULT=$(wscat -c "" -x '{"jsonrpc": "2.0", "method": "net_version", "params": [], "id": 1}')
+        export SHUTTER_NETWORK_NODE_ETHEREUMURL=ws://execution.${NETWORK}.dncore.dappnode:8545
+        RESULT=$(wscat -c "" -x '{"jsonrpc": "2.0", "method": "eth_syncing", "params": [], "id": 1}')
         if [[ $RESULT =~ '"id":1' ]]; then return 0; else
             echo "Could not find DAppNode RPC/WS url for this package!"
             echo "Please configure 'ETHEREUM_WS' to point to an applicable websocket RPC service."
@@ -38,7 +38,7 @@ fi
 export SHUTTER_P2P_ADVERTISEADDRESSES="[\"/ip4/${_DAPPNODE_GLOBAL_PUBLIC_IP}/tcp/${KEYPER_PORT}\", \"/ip4/${_DAPPNODE_GLOBAL_PUBLIC_IP}/udp/${KEYPER_PORT}/quic-v1\"]"
 
 //FIXME: This is a workaround for the issue with the staker-scripts@v0.1.1 not setting get_execution_ws_url_from_global_env correctly in the environment variables.
-export SHUTTER_NETWORK_NODE_ETHEREUMURL=${ETHEREUM_WS:-ws://execution.${SUPPORTED_NETWORKS}.dncore.dappnode:8546}
+export SHUTTER_NETWORK_NODE_ETHEREUMURL=${ETHEREUM_WS:-ws://execution.${NETWORK}.dncore.dappnode:8546}
 echo "[DEBUG | configure] SHUTTER_NETWORK_NODE_ETHEREUMURL is ${SHUTTER_NETWORK_NODE_ETHEREUMURL}"
 test_ethereum_url
 

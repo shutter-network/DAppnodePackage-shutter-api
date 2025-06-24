@@ -17,7 +17,6 @@ function test_ethereum_url() {
     # FIXME: This is a workaround for the issue with the staker-scripts@v0.1.1 not setting get_execution_ws_url_from_global_env correctly in the environment variables.
     # Git Issue: https://github.com/dappnode/staker-package-scripts/issues/11
     export SHUTTER_NETWORK_NODE_ETHEREUMURL=${ETHEREUM_WS:-ws://execution.${NETWORK}.dncore.dappnode:8546}
-    echo "[DEBUG | configure] SHUTTER_NETWORK_NODE_ETHEREUMURL is ${SHUTTER_NETWORK_NODE_ETHEREUMURL}"
     RESULT=$(wscat -c "$SHUTTER_NETWORK_NODE_ETHEREUMURL" -x '{"jsonrpc": "2.0", "method": "eth_syncing", "params": [], "id": 1}')
     if [[ $RESULT =~ '"id":1' ]]; then return 0; else
         export SHUTTER_NETWORK_NODE_ETHEREUMURL=ws://execution.${NETWORK}.dncore.dappnode:8545
@@ -42,6 +41,7 @@ fi
 export SHUTTER_P2P_ADVERTISEADDRESSES="[\"/ip4/${_DAPPNODE_GLOBAL_PUBLIC_IP}/tcp/${KEYPER_PORT}\", \"/ip4/${_DAPPNODE_GLOBAL_PUBLIC_IP}/udp/${KEYPER_PORT}/quic-v1\"]"
 
 test_ethereum_url
+echo "[DEBUG | configure] SHUTTER_NETWORK_NODE_ETHEREUMURL is ${SHUTTER_NETWORK_NODE_ETHEREUMURL}"
 
 export VALIDATOR_PUBLIC_KEY=$(cat "${SHUTTER_CHAIN_DIR}/config/priv_validator_pubkey.hex")
 export SHUTTER_METRICS_ENABLED=${SHUTTER_PUSH_METRICS_ENABLED}

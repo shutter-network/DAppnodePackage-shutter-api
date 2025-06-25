@@ -15,7 +15,7 @@ services:
         UPSTREAM_VERSION: v1.3.9
         KEYPER_CONFIG_DIR: /keyper/config
         SHUTTER_CHAIN_DIR: /chain
-        STAKER_SCRIPTS_VERSION: v0.1.1
+        STAKER_SCRIPTS_VERSION: v0.1.0
     restart: unless-stopped
     environment:
       - SHUTTER_API_NODE_PRIVATEKEY=""

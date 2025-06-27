@@ -6,7 +6,7 @@ services:
         CHAIN_PORT: 27656
         KEYPER_PORT: 24003
         KEYPER_METRICS_PORT: 9100
-        ASSETS_VERSION: shutter-api-gnosis-1000-v0.0.0
+        ASSETS_VERSION: shutter-api-gnosis-1000-v0.0.1
     ports:
       - "24003:24003"
       - "27656:27656"
@@ -17,4 +17,4 @@ services:
     build:
       args:
         NETWORK: gnosis
-        ASSETS_VERSION: shutter-api-gnosis-1000-v0.0.0
+        ASSETS_VERSION: shutter-api-gnosis-1000-v0.0.1

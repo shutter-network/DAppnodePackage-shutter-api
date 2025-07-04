@@ -12,7 +12,7 @@ services:
     build:
       context: shutter
       args:
-        UPSTREAM_VERSION: v1.3.9
+        UPSTREAM_VERSION: v1.3.10
         KEYPER_CONFIG_DIR: /keyper/config
         SHUTTER_CHAIN_DIR: /chain
         STAKER_SCRIPTS_VERSION: v0.1.0
@@ -25,6 +25,7 @@ services:
       - SHUTTER_PUSH_LOGS_ENABLED=false
       - PUSHGATEWAY_USERNAME=""
       - PUSHGATEWAY_PASSWORD=""
+      - SHUTTER_HTTP_ENABLED=false
     volumes:
       - chain:/chain
       - keyper-config:/keyper/config

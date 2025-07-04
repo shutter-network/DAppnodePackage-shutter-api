@@ -88,3 +88,15 @@ fields:
     required: false
     secret: true
     if: { enable_push_metrics: { "enum": ["true"] } }
+
+  - id: http_enabled
+    title: HTTP Service Enabled
+    description: |
+      Enable or disable the HTTP service for the API Keyper. If enabled, the HTTP server will be started to handle incoming API requests.
+    target:
+      type: environment
+      name: SHUTTER_HTTP_ENABLED
+      service: shutter
+    enum:
+      - "true"
+      - "false"

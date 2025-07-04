@@ -10,6 +10,7 @@ type KeyperConfig struct {
 	InstanceID           int    `env:"_ASSETS_INSTANCE_ID"`
 	DatabaseURL          string `env:"SHUTTER_DATABASEURL"`
 	BeaconAPIURL         string `env:"SHUTTER_BEACONAPIURL"`
+	HTTPEnabled          bool   `env:"SHUTTER_HTTP_ENABLED"`
 	MaxNumKeysPerMessage int    `env:"_ASSETS_MAX_NUM_KEYS_PER_MESSAGE"`
 	Chain                struct {
 		EncryptedGasLimit        int `env:"_ASSETS_ENCRYPTED_GAS_LIMIT"`

@@ -36,6 +36,10 @@ The setup wizard provides options for users to configure the package. These valu
    - `PUSHGATEWAY_USERNAME`: A username for the push gateway from above.
    - `PUSHGATEWAY_PASSWORD`: A password for the push gateway from above.
 
+### Backup and Restore
+
+For information on backing up and restoring your Shutter API package data, see the [Backup and Restore Guide](backup_restore.md).
+
 ### Developer notes
 
 Building the package requires docker and a vpn connection to a dappnode. It can be run with:

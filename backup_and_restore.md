@@ -45,6 +45,24 @@ After restoration, the environment variables in the restored deployment will mat
 - `PUSHGATEWAY_USERNAME`: Push gateway authentication
 - `PUSHGATEWAY_PASSWORD`: Push gateway authentication
 
+## ⚠️ Manual Configuration Restoration Required
+
+**Warning**: In order to add the values of the backed up installation, these should be added manually and can be found in two separate locations:
+
+- **`/metrics-config/settings.env`** will contain:
+  - `KEYPER_NAME`
+  - `PUSHGATEWAY_URL`
+  - `PUSHGATEWAY_USERNAME`
+  - `PUSHGATEWAY_PASSWORD` (if any)
+
+- **`/keyper-config/keyper.toml`** will contain:
+  - `SHUTTER_API_NODE_PRIVATEKEY`
+  - `ETHEREUM_WS`
+  - `SHUTTER_PUSH_METRICS_ENABLED`
+  - `HTTPEnabled`
+
+**Note**: At the moment, whether logs were enabled is not backed up.
+
 ## Security Considerations
 
 ⚠️ **Important Security Notes:**

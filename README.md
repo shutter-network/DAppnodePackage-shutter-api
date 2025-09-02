@@ -35,6 +35,9 @@ The setup wizard provides options for users to configure the package. These valu
    - `PUSHGATEWAY_URL`: You don't need to change the default here.
    - `PUSHGATEWAY_USERNAME`: A username for the push gateway from above.
    - `PUSHGATEWAY_PASSWORD`: A password for the push gateway from above.
+   - `SHUTTER_PUSH_LOGS_ENABLED`: A boolean flag to enable log collection. This feature enables log pushing to a Loki/VmLogs server, allowing the Shutter team to collect and monitor keyper logs for troubleshooting and network monitoring purposes.
+   - `SHUTTER_HTTP_ENABLED`: A boolean flag to enable HTTP service endpoints. This should remain **false** unless specifically requested by the Shutter team. When enabled, this will expose additional keyper HTTP endpoints for advanced monitoring and debugging.
+
 
 ### Backup and Restore
 

@@ -41,7 +41,7 @@ The setup wizard provides options for users to configure the package. These valu
 
 ### Backup and Restore
 
-For information on backing up and restoring your Shutter API package data, see the [Backup and Restore Guide](backup_restore.md).
+For information on backing up and restoring your Shutter API package data, see the [Backup and Restore Guide](https://github.com/shutter-network/DAppnodePackage-shutter-api/blob/main/backup_and_restore.md).
 
 ### Developer notes
 

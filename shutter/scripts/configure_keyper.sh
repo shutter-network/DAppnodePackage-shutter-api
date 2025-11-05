@@ -14,16 +14,11 @@ NODE_PATH=$NODE_HOME/lib/node_modules
 PATH=$NODE_HOME/bin:$PATH
 
 function test_ethereum_url() {
-    # FIXME: This is a workaround for the issue with the staker-scripts@v0.1.1 not setting get_execution_ws_url_from_global_env correctly in the environment variables.
-    # Git Issue: https://github.com/dappnode/staker-package-scripts/issues/11
     export SHUTTER_NETWORK_NODE_ETHEREUMURL=${ETHEREUM_WS:-$(get_execution_ws_url_from_global_env ${NETWORK})}
-    echo "[DEBUG | configure] SHUTTER_NETWORK_NODE_ETHEREUMURL is ${SHUTTER_NETWORK_NODE_ETHEREUMURL}"
     RESULT=$(wscat -c "$SHUTTER_NETWORK_NODE_ETHEREUMURL" -x '{"jsonrpc": "2.0", "method": "eth_syncing", "params": [], "id": 1}')
-    echo "[DEBUG | configure] RESULT is ${RESULT}"
     if [[ $RESULT =~ '"id":1' ]]; then return 0; else
-        export SHUTTER_NETWORK_NODE_ETHEREUMURL=ws://execution.${NETWORK}.dncore.dappnode:8546
+        export SHUTTER_NETWORK_NODE_ETHEREUMURL=ws://execution.${NETWORK}.dncore.dappnode:8545 #letting it default to the old URL, incase the node running on the dappnode is not updated to the new version
         RESULT=$(wscat -c "$SHUTTER_NETWORK_NODE_ETHEREUMURL" -x '{"jsonrpc": "2.0", "method": "eth_syncing", "params": [], "id": 1}')
-        echo "[DEBUG | configure] RESULT is ${RESULT}"
         if [[ $RESULT =~ '"id":1' ]]; then return 0; else
             echo "Could not find DAppNode RPC/WS url for this package!"
             echo "Please configure 'ETHEREUM_WS' to point to an applicable websocket RPC service."

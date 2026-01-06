@@ -12,10 +12,10 @@ services:
     build:
       context: shutter
       args:
-        UPSTREAM_VERSION: v1.3.13
+        UPSTREAM_VERSION: v1.4.0
         KEYPER_CONFIG_DIR: /keyper/config
         SHUTTER_CHAIN_DIR: /chain
-        STAKER_SCRIPTS_VERSION: v0.1.0
+        STAKER_SCRIPTS_VERSION: v0.1.2
     restart: unless-stopped
     environment:
       - SHUTTER_API_NODE_PRIVATEKEY=""
@@ -32,7 +32,7 @@ services:
   metrics:
     build:
       context: metrics
-    restart: on-failure
+    restart: unless-stopped
     environment:
       SHUTTER_PUSH_METRICS_ENABLED: true
       KEYPER_NAME: ""

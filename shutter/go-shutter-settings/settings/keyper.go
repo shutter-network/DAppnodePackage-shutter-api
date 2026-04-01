@@ -25,9 +25,10 @@ type KeyperConfig struct {
 			EthereumURL   string `env:"SHUTTER_NETWORK_NODE_ETHEREUMURL"`
 		}
 		Contracts struct {
-			KeyperSetManager     string `env:"_ASSETS_KEYPER_SET_MANAGER"`
-			KeyBroadcastContract string `env:"_ASSETS_KEY_BROADCAST_CONTRACT"`
-			ShutterRegistry      string `env:"_ASSETS_SHUTTERREGISTRY"`
+			KeyperSetManager            string `env:"_ASSETS_KEYPER_SET_MANAGER"`
+			KeyBroadcastContract        string `env:"_ASSETS_KEY_BROADCAST_CONTRACT"`
+			ShutterRegistry             string `env:"_ASSETS_SHUTTERREGISTRY"`
+			ShutterEventTriggerRegistry string `env:"_ASSETS_SHUTTER_EVENT_TRIGGER_REGISTRY"`
 		}
 	}
 	P2P struct {

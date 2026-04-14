@@ -145,9 +145,16 @@ if tar --help 2>/dev/null | grep -q -- '--warning'; then
   TAR_WARNING_FLAGS+=(--warning=no-unknown-keyword)
 fi
 
+EXTRACT_DIR="${TMP_DIR}/backup-extract"
 TAR_ERROR_FILE="${TMP_DIR}/tar-extract.err"
-if ! tar "${TAR_WARNING_FLAGS[@]}" -xf "$BACKUP_TARBALL_PATH" -C "$TMP_DIR" 2>"$TAR_ERROR_FILE"; then
-  if ! tar "${TAR_WARNING_FLAGS[@]}" -xJf "$BACKUP_TARBALL_PATH" -C "$TMP_DIR" 2>"$TAR_ERROR_FILE"; then
+extract_backup() {
+  rm -rf "$EXTRACT_DIR"
+  mkdir -p "$EXTRACT_DIR"
+  tar "${TAR_WARNING_FLAGS[@]}" "$1" "$BACKUP_TARBALL_PATH" -C "$EXTRACT_DIR" 2>"$TAR_ERROR_FILE"
+}
+
+if ! extract_backup -xf; then
+  if ! extract_backup -xJf; then
     echo "ERROR: failed to extract backup tarball: $BACKUP_TARBALL_PATH" >&2
     if [[ -s "$TAR_ERROR_FILE" ]]; then
       cat "$TAR_ERROR_FILE" >&2
@@ -156,7 +163,7 @@ if ! tar "${TAR_WARNING_FLAGS[@]}" -xf "$BACKUP_TARBALL_PATH" -C "$TMP_DIR" 2>"$
   fi
 fi
 
-if [[ -z "$(find "$TMP_DIR" -mindepth 1 -print -quit 2>/dev/null)" ]]; then
+if [[ -z "$(find "$EXTRACT_DIR" -mindepth 1 -print -quit 2>/dev/null)" ]]; then
   echo "ERROR: backup tarball extracted no files: $BACKUP_TARBALL_PATH" >&2
   exit 1
 fi
@@ -167,7 +174,7 @@ while IFS= read -r -d '' d; do
     DB_DATA_DIR="$d"
     break
   fi
-done < <(find "$TMP_DIR" -type d -name "db-data" -print0 2>/dev/null)
+done < <(find "$EXTRACT_DIR" -type d -name "db-data" -print0 2>/dev/null)
 
 if [[ -z "$DB_DATA_DIR" || ! -d "$DB_DATA_DIR" ]]; then
   echo "ERROR: could not find db-data directory (Postgres data) inside backup" >&2

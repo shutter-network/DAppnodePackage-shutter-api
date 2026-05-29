@@ -191,14 +191,18 @@ docker run -d --rm \
   "$BACKUP_IMAGE" >/dev/null
 
 log "Waiting for backup DB to become ready"
-for i in {1..30}; do
+_consecutive=0
+for i in {1..60}; do
   if docker exec "$BACKUP_CONTAINER" pg_isready -U "$BACKUP_USER" -d "$BACKUP_DB" >/dev/null 2>&1; then
-    break
+    _consecutive=$(( _consecutive + 1 ))
+    [ "$_consecutive" -ge 3 ] && break
+  else
+    _consecutive=0
   fi
   sleep 1
 done
-if ! docker exec "$BACKUP_CONTAINER" pg_isready -U "$BACKUP_USER" -d "$BACKUP_DB" >/dev/null 2>&1; then
-  echo "ERROR: backup DB did not become ready after 30 seconds" >&2
+if [[ "$_consecutive" -lt 3 ]]; then
+  echo "ERROR: backup DB did not become ready after 60 seconds" >&2
   exit 1
 fi
 
@@ -241,8 +245,7 @@ for entry in "${TABLES[@]}"; do
     >"$LIVE_CSV_FILE" 2>/dev/null || true
 
   if [[ ! -s "$LIVE_CSV_FILE" ]]; then
-    echo "ERROR: no data extracted from live DB (no row with ${KEY_COLUMN}=${KEY_VALUE} in ${TABLE})" >&2
-    exit 1
+    log "No existing row for ${TABLE} ${KEY_COLUMN}=${KEY_VALUE} in live DB, will insert"
   fi
 
   if [[ -s "$LIVE_CSV_FILE" && -s "$BACKUP_CSV_FILE" && "$(cat "$LIVE_CSV_FILE")" == "$(cat "$BACKUP_CSV_FILE")" ]]; then
@@ -259,23 +262,23 @@ for entry in "${TABLES[@]}"; do
     echo "INSERT INTO ${BACKUP_TABLE_NAME} SELECT * FROM ${TABLE};"
   } | docker exec -i "$LIVE_DB_CONTAINER" psql -U postgres -d "${KEYPER_DB}" >/dev/null 2>&1
 
-  UPDATE_SET=""
+  UPSERT_SET=""
   for col in "${SELECT_COLUMN_LIST[@]}"; do
-    if [[ -z "$UPDATE_SET" ]]; then
-      UPDATE_SET="${col} = u.${col}"
+    if [[ -z "$UPSERT_SET" ]]; then
+      UPSERT_SET="${col} = EXCLUDED.${col}"
     else
-      UPDATE_SET="${UPDATE_SET}, ${col} = u.${col}"
+      UPSERT_SET="${UPSERT_SET}, ${col} = EXCLUDED.${col}"
     fi
   done
 
   log "Restoring ${TABLE} row ${KEY_COLUMN}=${KEY_VALUE}"
   {
     echo "BEGIN;"
-    echo "CREATE TEMP TABLE tmp_update AS SELECT ${SELECT_COLUMNS_WITH_KEY} FROM ${TABLE} WHERE 1=0;"
-    echo "COPY tmp_update FROM STDIN WITH CSV;"
+    echo "CREATE TEMP TABLE tmp_upsert AS SELECT ${SELECT_COLUMNS_WITH_KEY} FROM ${TABLE} WHERE 1=0;"
+    echo "COPY tmp_upsert FROM STDIN WITH CSV;"
     cat "$BACKUP_CSV_FILE"
     echo '\.'
-    echo "UPDATE ${TABLE} AS t SET ${UPDATE_SET} FROM tmp_update u WHERE t.${KEY_COLUMN} = u.${KEY_COLUMN};"
+    echo "INSERT INTO ${TABLE} (${SELECT_COLUMNS_WITH_KEY}) SELECT ${SELECT_COLUMNS_WITH_KEY} FROM tmp_upsert ON CONFLICT (${KEY_COLUMN}) DO UPDATE SET ${UPSERT_SET};"
     echo "COMMIT;"
   } | docker exec -i "$LIVE_DB_CONTAINER" psql -U postgres -d "${KEYPER_DB}" >/dev/null 2>&1
 done

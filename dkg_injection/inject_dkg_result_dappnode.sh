@@ -133,7 +133,7 @@ fi
 log "Checking shuttermint sync block number >= ${MIN_TENDERMINT_CURRENT_BLOCK}"
 if ! docker exec -i "$LIVE_DB_CONTAINER" sh -lc \
   "psql -t -A -U postgres -d ${KEYPER_DB} -c \"SELECT current_block FROM tendermint_sync_meta ORDER BY current_block DESC LIMIT 1\"" \
-  >"$CMD_LOG" 2>&1; then
+  </dev/null >"$CMD_LOG" 2>&1; then
   echo "ERROR: failed to read shuttermint sync block number" >&2
   exit 1
 fi
@@ -239,7 +239,7 @@ fi
 log "Checking if backup tables already exist"
 if ! docker exec -i "$LIVE_DB_CONTAINER" psql -t -A -U postgres -d "${KEYPER_DB}" \
   -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('dkg_result_backup', 'keyper_set_backup', 'tendermint_batch_config_backup')" \
-  >"$CMD_LOG" 2>&1; then
+  </dev/null >"$CMD_LOG" 2>&1; then
   echo "ERROR: failed to check backup tables" >&2
   exit 1
 fi

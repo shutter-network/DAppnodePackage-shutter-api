@@ -25,6 +25,7 @@ KEYPER_CONFIG_INDEX="11"
 KEYPERS="{0xe03472CCb8e011b7Dfb3343837D75Bf6C9c3324C,0x4B5E2356b666898e101627BdDc518956bcd90a03,0x23d33956940083e0E92Dd608D6E576AfbEcc83a9,0x48A0e1789C82084aE28c179bd5742454f8CD4ed6,0xfc7d75e4bb6D18591cDc1E766CE7cF231bc08fBc,0x00D82BAc88c5E60fDAfac7e534A13D0E7F3e145a,0xcc7cd01106951B4809e640873C15363609d2C58e,0x7Ca18A55b64c1509d34e964a9e323a6c71e905a2,0x0c8f3E3912F35a59ffddc9Ff1ABB8FafC89b29de,0xEbe0BE11161e8aea85733D4ff09De6470E6558Da,0x2AF3d10Ac40737bf38437e96C8EdE308f2C6A3bc,0x4521DC1B2748585E51f8631A0f4c964B6e8BC893}"
 THRESHOLD="5"
 ACTIVATION_BLOCK_NUMBER="44979852"
+BACKUP_ACTIVATION_BLOCK_NUMBER="39200771"
 TENDERMINT_HEIGHT="723"
 TENDERMINT_STARTED="true"
 
@@ -224,7 +225,7 @@ if [[ "$_consecutive" -lt 3 ]]; then
   exit 1
 fi
 
-log "Checking dkg_result row exists in backup for eon=${EON}"
+log "Checking backup DB state"
 if ! docker exec "$BACKUP_CONTAINER" psql -t -A -U "$BACKUP_USER" -d "$KEYPER_DB" \
   -c "SELECT COUNT(*) FROM dkg_result WHERE eon = ${EON}" >"$CMD_LOG" 2>&1; then
   echo "ERROR: failed to check dkg_result row in backup DB" >&2
@@ -233,6 +234,39 @@ fi
 BACKUP_DKG_COUNT=$(tr -d '[:space:]' <"$CMD_LOG")
 if [[ "$BACKUP_DKG_COUNT" == "0" ]]; then
   echo "ERROR: no dkg_result row for eon=${EON} in backup DB" >&2
+  exit 1
+fi
+
+if ! docker exec "$BACKUP_CONTAINER" psql -t -A -U "$BACKUP_USER" -d "$KEYPER_DB" \
+  -c "SELECT COUNT(*) FROM dkg_result WHERE eon = ${EON} AND success = true AND pure_result IS NOT NULL" >"$CMD_LOG" 2>&1; then
+  echo "ERROR: failed to check dkg_result fields in backup DB" >&2
+  exit 1
+fi
+BACKUP_DKG_VALID=$(tr -d '[:space:]' <"$CMD_LOG")
+if [[ "$BACKUP_DKG_VALID" == "0" ]]; then
+  echo "ERROR: dkg_result row for eon=${EON} in backup does not have success=true and pure_result set" >&2
+  exit 1
+fi
+
+if ! docker exec "$BACKUP_CONTAINER" psql -t -A -U "$BACKUP_USER" -d "$KEYPER_DB" \
+  -c "SELECT COUNT(*) FROM keyper_set WHERE keyper_config_index = ${KEYPER_CONFIG_INDEX}" >"$CMD_LOG" 2>&1; then
+  echo "ERROR: failed to check keyper_set row in backup DB" >&2
+  exit 1
+fi
+BACKUP_KEYPER_SET_COUNT=$(tr -d '[:space:]' <"$CMD_LOG")
+if [[ "$BACKUP_KEYPER_SET_COUNT" == "0" ]]; then
+  echo "ERROR: no keyper_set row for keyper_config_index=${KEYPER_CONFIG_INDEX} in backup DB" >&2
+  exit 1
+fi
+
+if ! docker exec "$BACKUP_CONTAINER" psql -t -A -U "$BACKUP_USER" -d "$KEYPER_DB" \
+  -c "SELECT COUNT(*) FROM keyper_set WHERE keyper_config_index = ${KEYPER_CONFIG_INDEX} AND activation_block_number = ${BACKUP_ACTIVATION_BLOCK_NUMBER} AND keypers = '${KEYPERS}' AND threshold = ${THRESHOLD}" >"$CMD_LOG" 2>&1; then
+  echo "ERROR: failed to check keyper_set values in backup DB" >&2
+  exit 1
+fi
+BACKUP_KEYPER_SET_VALID=$(tr -d '[:space:]' <"$CMD_LOG")
+if [[ "$BACKUP_KEYPER_SET_VALID" == "0" ]]; then
+  echo "ERROR: keyper_set row for keyper_config_index=${KEYPER_CONFIG_INDEX} in backup does not match expected values (activation_block_number=${BACKUP_ACTIVATION_BLOCK_NUMBER}, keypers, threshold=${THRESHOLD})" >&2
   exit 1
 fi
 

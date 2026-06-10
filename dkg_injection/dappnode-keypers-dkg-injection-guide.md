@@ -44,13 +44,29 @@ Copy the backup to the same instance where the keyper is running.
 After a keyperset transition is done, run the Dappnode DKG injection script with the backup path:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/DAppnodePackage-shutter-api
-/dkg-injection/dkg_injection/inject_dkg_result_dappnode.sh | bash -s -- <path_to_dappnode_backup>
+curl -fsSL https://raw.githubusercontent.com/shutter-network/DAppnodePackage-shutter-api/dkg-injection/dkg_injection/inject_dkg_result_dappnode.sh | bash -s -- <path_to_dappnode_backup>
 ```
 
 Replace `<path_to_dappnode_backup>` with the actual path to your Dappnode backup archive.
 
-Check if there is no error in running the script.
+Check if there is no error in running the script. The output should look something like this:
+
+```
+==> Checking shuttermint sync block number >= 349800
+==> Stopping keyper service
+==> Extracting keyper DB from backup
+==> Starting backup container
+==> Waiting for backup DB to become ready
+==> Checking backup DB state
+==> Checking if backup tables already exist
+==> Backing up tables
+==> Injecting DKG result
+==> Done
+==> Stopping backup container
+==> Restarting keyper service (was running before)
+==> Keeping db service running (was running before)
+==> Removing temporary directory /tmp/tmp.7l26Tilq40
+```
 
 ---
 

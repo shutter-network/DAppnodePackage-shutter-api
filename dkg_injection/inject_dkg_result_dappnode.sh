@@ -201,6 +201,7 @@ if [[ -z "$DB_DATA_DIR" || ! -d "$DB_DATA_DIR" ]]; then
 fi
 
 log "Starting backup container"
+run_logged "pull backup image" docker pull "$BACKUP_IMAGE"
 run_logged "start backup container" docker run -d --rm \
   --name "$BACKUP_CONTAINER" \
   -e POSTGRES_USER="$BACKUP_USER" \

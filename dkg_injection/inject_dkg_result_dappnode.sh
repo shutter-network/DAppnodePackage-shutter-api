@@ -30,7 +30,7 @@ TENDERMINT_HEIGHT="723"
 TENDERMINT_STARTED="true"
 
 BACKUP_CONTAINER="backup-db"
-BACKUP_IMAGE="postgres"
+BACKUP_IMAGE="postgres:16"
 BACKUP_DB="postgres"
 BACKUP_USER="postgres"
 BACKUP_PASSWORD="postgres"

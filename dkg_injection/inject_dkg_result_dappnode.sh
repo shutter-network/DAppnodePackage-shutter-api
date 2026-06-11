@@ -155,8 +155,10 @@ if (( CURRENT_BLOCK < MIN_TENDERMINT_CURRENT_BLOCK )); then
   exit 1
 fi
 
-log "Stopping keyper service"
-docker stop "$LIVE_KEYPER_CONTAINER" >/dev/null 2>&1 || true
+if [[ "$KEYPER_WAS_RUNNING" -eq 1 ]]; then
+  log "Stopping keyper service"
+  docker stop "$LIVE_KEYPER_CONTAINER" >/dev/null 2>&1
+fi
 
 log "Extracting keyper DB from backup"
 TAR_WARNING_FLAGS=()
@@ -278,20 +280,25 @@ if ! docker exec -i "$LIVE_DB_CONTAINER" psql -t -A -U postgres -d "${KEYPER_DB}
   echo "ERROR: failed to check backup tables" >&2
   exit 1
 fi
-BACKUP_EXISTS=$(tr -d '[:space:]' <"$CMD_LOG")
-if [[ "$BACKUP_EXISTS" -gt 0 ]]; then
+NUM_EXISTING_BACKUP_TABLES=$(tr -d '[:space:]' <"$CMD_LOG")
+if [[ "$NUM_EXISTING_BACKUP_TABLES" -eq 3 ]]; then
   log "Backup tables already exist — skipping backup to preserve original state"
-else
+elif [[ "$NUM_EXISTING_BACKUP_TABLES" -eq 0 ]]; then
   log "Backing up tables"
   {
+    echo "BEGIN;"
     for TABLE in dkg_result keyper_set tendermint_batch_config; do
       echo "CREATE TABLE ${TABLE}_backup (LIKE ${TABLE} INCLUDING ALL);"
       echo "INSERT INTO ${TABLE}_backup SELECT * FROM ${TABLE};"
     done
+    echo "COMMIT;"
   } | docker exec -i "$LIVE_DB_CONTAINER" psql -v ON_ERROR_STOP=1 -U postgres -d "${KEYPER_DB}" >"$CMD_LOG" 2>&1 || {
     echo "ERROR: failed to back up tables" >&2
     exit 1
   }
+else
+  echo "ERROR: partial backup state — some but not all backup tables exist" >&2
+  exit 1
 fi
 
 log "Injecting DKG result"
@@ -325,5 +332,42 @@ log "Injecting DKG result"
   echo "ERROR: failed to inject DKG result" >&2
   exit 1
 }
+
+log "Verifying injected data"
+if ! docker exec -i "$LIVE_DB_CONTAINER" psql -t -A -U postgres -d "${KEYPER_DB}" \
+  -c "SELECT COUNT(*) FROM dkg_result WHERE eon = ${EON} AND success = true AND pure_result IS NOT NULL" \
+  </dev/null >"$CMD_LOG" 2>&1; then
+  echo "ERROR: failed to verify dkg_result" >&2
+  exit 1
+fi
+VERIFY_DKG=$(tr -d '[:space:]' <"$CMD_LOG")
+if [[ "$VERIFY_DKG" != "1" ]]; then
+  echo "ERROR: dkg_result verification failed — expected 1 row with success=true and pure_result set for eon=${EON}, got ${VERIFY_DKG}" >&2
+  exit 1
+fi
+
+if ! docker exec -i "$LIVE_DB_CONTAINER" psql -t -A -U postgres -d "${KEYPER_DB}" \
+  -c "SELECT COUNT(*) FROM keyper_set WHERE keyper_config_index = ${KEYPER_CONFIG_INDEX} AND activation_block_number = ${ACTIVATION_BLOCK_NUMBER} AND keypers = '${KEYPERS}' AND threshold = ${THRESHOLD}" \
+  </dev/null >"$CMD_LOG" 2>&1; then
+  echo "ERROR: failed to verify keyper_set" >&2
+  exit 1
+fi
+VERIFY_KEYPER_SET=$(tr -d '[:space:]' <"$CMD_LOG")
+if [[ "$VERIFY_KEYPER_SET" != "1" ]]; then
+  echo "ERROR: keyper_set verification failed — expected 1 matching row for keyper_config_index=${KEYPER_CONFIG_INDEX}, got ${VERIFY_KEYPER_SET}" >&2
+  exit 1
+fi
+
+if ! docker exec -i "$LIVE_DB_CONTAINER" psql -t -A -U postgres -d "${KEYPER_DB}" \
+  -c "SELECT COUNT(*) FROM tendermint_batch_config WHERE keyper_config_index = ${KEYPER_CONFIG_INDEX} AND height = ${TENDERMINT_HEIGHT} AND keypers = '${KEYPERS}' AND threshold = ${THRESHOLD} AND started = ${TENDERMINT_STARTED} AND activation_block_number = ${ACTIVATION_BLOCK_NUMBER}" \
+  </dev/null >"$CMD_LOG" 2>&1; then
+  echo "ERROR: failed to verify tendermint_batch_config" >&2
+  exit 1
+fi
+VERIFY_BATCH_CONFIG=$(tr -d '[:space:]' <"$CMD_LOG")
+if [[ "$VERIFY_BATCH_CONFIG" != "1" ]]; then
+  echo "ERROR: tendermint_batch_config verification failed — expected 1 matching row for keyper_config_index=${KEYPER_CONFIG_INDEX}, got ${VERIFY_BATCH_CONFIG}" >&2
+  exit 1
+fi
 
 log "Done"

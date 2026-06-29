@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Publish
-        run: npx @dappnode/dappnodesdk publish patch --dappnode_team_preset --timeout 1h --all-variants
+        run: npx @dappnode/dappnodesdk publish patch --dappnode_team_preset --timeout 1h --variant gnosis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEVELOPER_ADDRESS: "0x30eFb96763f07892d0E2f7E900c672d43A202E61"

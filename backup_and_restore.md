@@ -11,7 +11,7 @@ DAppNode provides a built-in backup functionality through the DAppNode UI. Users
 The package automatically backs up the following critical data:
 
 - **Keyper Configuration** (`/keyper/config`): Contains your Shutter Keyper settings and configuration files
-- **Chain Configuration** (`/chain/config`): Contains your Shutter Chain node configuration
+- **Chain Configuration** (`/chain/config`): Contains your Shutter Chain node configuration, including the Shuttermint validator key (`priv_validator_key.json`). A keyper restored without it runs with a new validator key.
 - **Database Data** (`/var/lib/postgresql/data`): Contains the PostgreSQL database with your Keyper's state
 - **Metrics Configuration** (`/config/user`): Contains your metrics service configuration
 
@@ -32,6 +32,8 @@ The DAppNode package must be installed first through the DAppNode UI. This creat
 
 ### Step 2: Backup Restoration
 Once installation is complete, the previously downloaded backup file can be restored to the newly installed package. This will restore all your previous data.
+
+Before the backup, note the `Shuttermint validator public key` line that the shutter service printed at its latest start. If it is no longer in the log, restart the package to print it again. The restore restarts the package; after it, check that the log shows the same key and no `[WARN | configure]` line about the validator key. Keep the package running during the restore: the restore skips the files of a stopped service.
 
 ## Environment Variables
 
